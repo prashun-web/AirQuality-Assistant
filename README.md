@@ -1,10 +1,10 @@
 <div align="center">
 
-# 🌫️ Smog Navigator
+# 🌍 AirWise
 
-### Breathe easier through smog season
+### Know your air. Act on it.
 
-A GenAI-powered assistant that helps families and communities navigate severe winter smog and urban air pollution, with low-emission routines, indoor air hacks and sustainable alternatives tailored to their city and lifestyle, and a clear explanation of the impact of every choice.
+A GenAI-powered air quality assistant that helps families and communities navigate severe winter smog and everyday urban air pollution. It suggests low-emission daily routines, indoor air quality hacks and sustainable alternatives tailored to their city and lifestyle, and clearly explains the impact of every choice.
 
 <!-- EDIT: replace YOUR-LINK with your Vercel URL -->
 ### 🔗 [**Live demo → https://airqualityassistant.vercel.app/ ]
