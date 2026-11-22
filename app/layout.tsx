@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Smog Navigator: low-emission plans for smoggy days",
+  title: "AirWise: your personal air quality assistant",
   description:
     "Live air quality and personalised, low-emission tips for families, with the estimated impact of each action.",
 };
