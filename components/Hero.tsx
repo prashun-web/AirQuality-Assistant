@@ -25,17 +25,17 @@ export function Hero() {
         {/* Category Pill Badge */}
         <div className="inline-flex items-center gap-2 rounded-full border border-teal-400/30 bg-teal-950/60 px-3.5 py-1 text-xs font-semibold uppercase tracking-wider text-teal-300 backdrop-blur-sm">
           <span className="h-2 w-2 rounded-full bg-teal-400 animate-pulse" aria-hidden="true" />
-          <span>Winter smog, made manageable</span>
+          <span>Your personal air quality assistant</span>
         </div>
 
         {/* Main Headline */}
         <h1 className="mt-4 max-w-3xl text-3xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl text-white">
-          Breathe easier through smog season
+          Every Breath Deserves Better Air
         </h1>
 
         {/* Supporting Description */}
         <p className="mt-5 max-w-2xl text-base sm:text-lg leading-relaxed text-slate-200">
-          Smog Navigator checks the live air quality in your city and builds a simple,
+          AirWise checks the live air quality in your city and builds a simple,
           low-emission plan for your family, with a clear explanation of what each step
           is likely to do for you.
         </p>
