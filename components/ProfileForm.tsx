@@ -85,8 +85,8 @@ function CheckboxField({ id, label, checked, onChange }: CheckboxFieldProps) {
     <label
       htmlFor={id}
       className={`flex items-center gap-3 rounded-xl border p-3 min-h-[44px] cursor-pointer transition-all duration-150 select-none ${checked
-          ? "border-sky-600 bg-sky-50/70 text-slate-900 shadow-xs ring-1 ring-sky-600/30"
-          : "border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50/80"
+        ? "border-sky-600 bg-sky-50/70 text-slate-900 shadow-xs ring-1 ring-sky-600/30"
+        : "border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50/80"
         }`}
     >
       <input
