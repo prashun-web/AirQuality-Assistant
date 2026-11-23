@@ -33,8 +33,40 @@ const INITIAL_PROFILE: UserProfile = {
   fuel: "lpg",
 };
 
+// One-click sample households. They only prefill the form; the user still
+// submits, so the real API, live air data and safety rule all run as normal.
+const EXAMPLES: Array<{ label: string; profile: UserProfile }> = [
+  {
+    label: "Family in Delhi",
+    profile: {
+      city: "Delhi",
+      hasChildren: true,
+      hasElderly: true,
+      hasRespiratoryCondition: false,
+      hasPurifier: false,
+      commute: "car",
+      fuel: "wood_or_coal",
+    },
+  },
+  {
+    label: "Asthma, Kolkata",
+    profile: {
+      city: "Kolkata",
+      hasChildren: false,
+      hasElderly: false,
+      hasRespiratoryCondition: true,
+      hasPurifier: true,
+      commute: "public_transport",
+      fuel: "lpg",
+    },
+  },
+];
+
 const INPUT_STYLE =
   "mt-1.5 block w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 min-h-[44px] transition-colors focus:border-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-500/25";
+
+const EXAMPLE_BUTTON_STYLE =
+  "min-h-[44px] rounded-full border border-slate-400 bg-white px-4 py-2 text-sm font-medium text-slate-900 transition-colors hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-sky-500";
 
 interface ProfileFormProps {
   isLoading: boolean;
@@ -52,11 +84,10 @@ function CheckboxField({ id, label, checked, onChange }: CheckboxFieldProps) {
   return (
     <label
       htmlFor={id}
-      className={`flex items-center gap-3 rounded-xl border p-3 min-h-[44px] cursor-pointer transition-all duration-150 select-none ${
-        checked
+      className={`flex items-center gap-3 rounded-xl border p-3 min-h-[44px] cursor-pointer transition-all duration-150 select-none ${checked
           ? "border-sky-600 bg-sky-50/70 text-slate-900 shadow-xs ring-1 ring-sky-600/30"
           : "border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50/80"
-      }`}
+        }`}
     >
       <input
         id={id}
@@ -84,11 +115,26 @@ export function ProfileForm({ isLoading, onSubmit }: ProfileFormProps) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      <div role="group" aria-label="Try an example" className="flex flex-wrap items-center gap-2">
+        <span className="text-sm text-slate-700">Try an example:</span>
+        {EXAMPLES.map((example) => (
+          // type="button" so clicking an example never submits the form.
+          <button
+            key={example.label}
+            type="button"
+            onClick={() => setProfile(example.profile)}
+            className={EXAMPLE_BUTTON_STYLE}
+          >
+            {example.label}
+          </button>
+        ))}
+      </div>
+
       <div>
         <label htmlFor="city" className="block text-sm font-semibold text-slate-900">
           City
         </label>
-        <p className="mt-0.5 text-xs text-slate-500">
+        <p className="mt-0.5 text-xs text-slate-600">
           Live AQI coordinates are retrieved automatically.
         </p>
         <div className="relative mt-1">
@@ -107,7 +153,7 @@ export function ProfileForm({ isLoading, onSubmit }: ProfileFormProps) {
 
       <fieldset className="rounded-xl border border-slate-200 bg-slate-50/50 p-4 space-y-2.5">
         <legend className="px-1 text-sm font-semibold text-slate-900">Who lives at home?</legend>
-        <p className="text-xs text-slate-500 -mt-1 pb-1">Select all vulnerable groups that apply:</p>
+        <p className="text-xs text-slate-600 -mt-1 pb-1">Select all vulnerable groups that apply:</p>
         <div className="space-y-2">
           <CheckboxField
             id="children"
@@ -134,7 +180,7 @@ export function ProfileForm({ isLoading, onSubmit }: ProfileFormProps) {
         <label htmlFor="commute" className="block text-sm font-semibold text-slate-900">
           Main way of getting around
         </label>
-        <p className="mt-0.5 text-xs text-slate-500">Affects outdoor exposure calculations.</p>
+        <p className="mt-0.5 text-xs text-slate-600">Affects outdoor exposure tips.</p>
         <select
           id="commute"
           value={profile.commute}
@@ -153,7 +199,7 @@ export function ProfileForm({ isLoading, onSubmit }: ProfileFormProps) {
         <label htmlFor="fuel" className="block text-sm font-semibold text-slate-900">
           Cooking or heating fuel
         </label>
-        <p className="mt-0.5 text-xs text-slate-500">Calibrates indoor particulate sources.</p>
+        <p className="mt-0.5 text-xs text-slate-600">Affects indoor air tips.</p>
         <select
           id="fuel"
           value={profile.fuel}
@@ -185,7 +231,7 @@ export function ProfileForm({ isLoading, onSubmit }: ProfileFormProps) {
         {isLoading ? (
           <>
             <svg
-              className="h-5 w-5 animate-spin text-white"
+              className="h-5 w-5 motion-safe:animate-spin text-white"
               fill="none"
               viewBox="0 0 24 24"
               aria-hidden="true"

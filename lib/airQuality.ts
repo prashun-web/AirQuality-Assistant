@@ -3,12 +3,17 @@
 // Uses the free Open-Meteo APIs (no API key needed).
 // ---------------------------------------------------------------------------
 
+import { TtlCache } from "./cache";
 import { AirQualityUnavailableError, CityNotFoundError } from "./errors";
+import { fetchJsonWithTimeout } from "./http";
 import type { AirQuality, AqiCategory } from "./types";
 
 const GEOCODING_URL = "https://geocoding-api.open-meteo.com/v1/search";
 const AIR_QUALITY_URL = "https://air-quality-api.open-meteo.com/v1/air-quality";
 const REQUEST_TIMEOUT_MS = 8_000;
+
+const GEOCODE_TTL_MS = 24 * 60 * 60 * 1000; // city locations do not move
+const AIR_TTL_MS = 10 * 60 * 1000; // upstream data updates about hourly
 
 interface GeocodingResponse {
   results?: Array<{
@@ -26,6 +31,12 @@ interface AirQualityResponse {
     pm10?: number;
   };
 }
+
+type Place = NonNullable<GeocodingResponse["results"]>[number];
+
+// Caches live per server instance; only successful lookups are stored.
+const placeCache = new TtlCache<Place>(GEOCODE_TTL_MS);
+const airCache = new TtlCache<AirQuality>(AIR_TTL_MS);
 
 // Standard US AQI breakpoints, checked from lowest to highest.
 const AQI_BREAKPOINTS: Array<{ max: number; category: AqiCategory }> = [
@@ -45,36 +56,13 @@ export function getAqiCategory(aqi: number): AqiCategory {
   return match ? match.category : "Hazardous";
 }
 
-// One shared helper so the timeout and error handling exist in a single place.
+// Any upstream failure becomes one friendly, user-safe error.
 async function fetchJson<T>(url: string): Promise<T> {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
-
   try {
-    const response = await fetch(url, { signal: controller.signal });
-    if (!response.ok) throw new AirQualityUnavailableError();
-    return (await response.json()) as T;
-  } catch (error) {
-    if (error instanceof AirQualityUnavailableError) throw error;
-    // Network failure, timeout or bad JSON: hide the details from the user.
+    return await fetchJsonWithTimeout<T>(url, {}, REQUEST_TIMEOUT_MS);
+  } catch {
     throw new AirQualityUnavailableError();
-  } finally {
-    clearTimeout(timer);
   }
-}
-
-async function geocodeCity(city: string) {
-  const params = new URLSearchParams({
-    name: city,
-    count: "1",
-    language: "en",
-    format: "json",
-  });
-  const data = await fetchJson<GeocodingResponse>(`${GEOCODING_URL}?${params}`);
-
-  const place = data.results?.[0];
-  if (!place) throw new CityNotFoundError();
-  return place;
 }
 
 function isNumber(value: unknown): value is number {
@@ -86,9 +74,27 @@ const roundTo = (value: number, decimals: number): number => {
   return Math.round(value * factor) / factor;
 };
 
-export async function getAirQuality(city: string): Promise<AirQuality> {
-  const place = await geocodeCity(city);
+async function geocodeCity(city: string): Promise<Place> {
+  const cacheKey = city.toLowerCase();
+  const cached = placeCache.get(cacheKey);
+  if (cached) return cached;
 
+  const params = new URLSearchParams({
+    name: city,
+    count: "1",
+    language: "en",
+    format: "json",
+  });
+  const data = await fetchJson<GeocodingResponse>(`${GEOCODING_URL}?${params}`);
+
+  const place = data.results?.[0];
+  if (!place) throw new CityNotFoundError();
+
+  placeCache.set(cacheKey, place);
+  return place;
+}
+
+async function fetchCurrentAir(place: Place): Promise<AirQuality> {
   const params = new URLSearchParams({
     latitude: String(place.latitude),
     longitude: String(place.longitude),
@@ -110,4 +116,16 @@ export async function getAirQuality(city: string): Promise<AirQuality> {
     pm10: roundTo(pm10, 1),
     category: getAqiCategory(aqi),
   };
+}
+
+export async function getAirQuality(city: string): Promise<AirQuality> {
+  const place = await geocodeCity(city);
+  const cacheKey = `${place.latitude},${place.longitude}`;
+
+  const cached = airCache.get(cacheKey);
+  if (cached) return cached;
+
+  const air = await fetchCurrentAir(place);
+  airCache.set(cacheKey, air);
+  return air;
 }
