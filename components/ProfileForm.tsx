@@ -49,7 +49,7 @@ const EXAMPLES: Array<{ label: string; profile: UserProfile }> = [
     },
   },
   {
-    label: "Asthma, Kolkata",
+    label: "Asthma Patient in Kolkata",
     profile: {
       city: "Kolkata",
       hasChildren: false,
