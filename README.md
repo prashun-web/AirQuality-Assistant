@@ -222,6 +222,5 @@ npm run build
 
 <div align="center">
 
-Built for the hackathon by **YOUR NAME**
 
 </div>
