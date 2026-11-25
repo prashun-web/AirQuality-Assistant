@@ -4,6 +4,10 @@
 
 import type { AirQuality, AqiCategory } from "@/lib/types";
 
+const METRIC_CARD_STYLE = "rounded-xl border border-slate-200/80 bg-white/90 p-3 shadow-xs";
+const METRIC_LABEL_STYLE = "text-[11px] font-semibold uppercase tracking-wider text-slate-500";
+const METRIC_VALUE_STYLE = "mt-1 text-base sm:text-lg font-bold text-slate-900";
+
 interface AqiBadgeProps {
   air: AirQuality;
 }
@@ -12,8 +16,6 @@ interface CategoryConfig {
   cardBg: string;
   cardBorder: string;
   badgeBg: string;
-  badgeText: string;
-  indicatorColor: string;
   textColor: string;
   labelColor: string;
   summary: string;
@@ -24,8 +26,6 @@ const CATEGORY_THEMES: Record<AqiCategory, CategoryConfig> = {
     cardBg: "bg-emerald-50/80",
     cardBorder: "border-emerald-300",
     badgeBg: "bg-emerald-700 text-white",
-    badgeText: "text-emerald-950",
-    indicatorColor: "bg-emerald-500",
     textColor: "text-emerald-950",
     labelColor: "text-emerald-800",
     summary: "Air quality is satisfactory and poses little or no health risk.",
@@ -34,8 +34,6 @@ const CATEGORY_THEMES: Record<AqiCategory, CategoryConfig> = {
     cardBg: "bg-amber-50/80",
     cardBorder: "border-amber-300",
     badgeBg: "bg-amber-700 text-white",
-    badgeText: "text-amber-950",
-    indicatorColor: "bg-amber-500",
     textColor: "text-amber-950",
     labelColor: "text-amber-800",
     summary: "Air quality is acceptable; unusually sensitive individuals should take precautions.",
@@ -44,8 +42,6 @@ const CATEGORY_THEMES: Record<AqiCategory, CategoryConfig> = {
     cardBg: "bg-orange-50/80",
     cardBorder: "border-orange-300",
     badgeBg: "bg-orange-700 text-white",
-    badgeText: "text-orange-950",
-    indicatorColor: "bg-orange-500",
     textColor: "text-orange-950",
     labelColor: "text-orange-900",
     summary: "Children, older adults, and individuals with respiratory issues may experience symptoms.",
@@ -54,8 +50,6 @@ const CATEGORY_THEMES: Record<AqiCategory, CategoryConfig> = {
     cardBg: "bg-rose-50/80",
     cardBorder: "border-rose-300",
     badgeBg: "bg-rose-700 text-white",
-    badgeText: "text-rose-950",
-    indicatorColor: "bg-rose-500",
     textColor: "text-rose-950",
     labelColor: "text-rose-900",
     summary: "Everyone may begin to experience health effects; sensitive groups are at greater risk.",
@@ -64,8 +58,6 @@ const CATEGORY_THEMES: Record<AqiCategory, CategoryConfig> = {
     cardBg: "bg-purple-50/80",
     cardBorder: "border-purple-300",
     badgeBg: "bg-purple-800 text-white",
-    badgeText: "text-purple-950",
-    indicatorColor: "bg-purple-600",
     textColor: "text-purple-950",
     labelColor: "text-purple-900",
     summary: "Health alert: elevated risk of serious respiratory symptoms for all individuals.",
@@ -74,8 +66,6 @@ const CATEGORY_THEMES: Record<AqiCategory, CategoryConfig> = {
     cardBg: "bg-slate-900",
     cardBorder: "border-rose-600",
     badgeBg: "bg-rose-600 text-white",
-    badgeText: "text-rose-200",
-    indicatorColor: "bg-rose-500",
     textColor: "text-white",
     labelColor: "text-slate-300",
     summary: "Emergency conditions: avoid outdoor activities; indoor filtration is essential.",
@@ -172,19 +162,15 @@ export function AqiBadge({ air }: AqiBadgeProps) {
 
       {/* Particulate Matter Metrics Sub-grid */}
       <div className="mt-5 grid grid-cols-2 gap-3">
-        <div className="rounded-xl border border-slate-200/80 bg-white/90 p-3 shadow-xs">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
-            PM2.5 Fine Particles
-          </p>
-          <p className="mt-1 text-base sm:text-lg font-bold text-slate-900">
+        <div className={METRIC_CARD_STYLE}>
+          <p className={METRIC_LABEL_STYLE}>PM2.5 Fine Particles</p>
+          <p className={METRIC_VALUE_STYLE}>
             {air.pm25} <span className="text-xs font-normal text-slate-500">µg/m³</span>
           </p>
         </div>
-        <div className="rounded-xl border border-slate-200/80 bg-white/90 p-3 shadow-xs">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
-            PM10 Coarse Dust
-          </p>
-          <p className="mt-1 text-base sm:text-lg font-bold text-slate-900">
+        <div className={METRIC_CARD_STYLE}>
+          <p className={METRIC_LABEL_STYLE}>PM10 Coarse Dust</p>
+          <p className={METRIC_VALUE_STYLE}>
             {air.pm10} <span className="text-xs font-normal text-slate-500">µg/m³</span>
           </p>
         </div>

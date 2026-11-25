@@ -23,6 +23,30 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+@keyframes hero-leaf-float {
+
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+
+  50% {
+    transform: translateY(-8px) rotate(6deg);
+  }
+}
+
+.hero-leaf-float {
+  animation: hero-leaf-float 5.5s ease-in-out infinite;
+}
+
+.hero-leaf-float-delayed {
+  animation: hero-leaf-float 6.5s ease-in-out 1.4s infinite;
+}
+
+.hero-leaf-float-slow {
+  animation: hero-leaf-float 7.5s ease-in-out 0.7s infinite;
+}
+
 /* Accessibility: Respect user motion preferences */
 @media (prefers-reduced-motion: reduce) {
   html {

@@ -70,7 +70,12 @@ async function callGemini(prompt: string, apiKey: string): Promise<string> {
   } catch (error) {
     if (error instanceof LlmResponseError) throw error;
     // Log only the status or error type, never the key, the prompt or the response body.
-    const reason = error instanceof UpstreamHttpError ? error.status : (error as Error).name;
+    const reason =
+      error instanceof UpstreamHttpError
+        ? error.status
+        : error instanceof Error
+          ? error.name
+          : "unknown";
     console.error(`Gemini request failed: ${reason}`);
     throw new LlmResponseError();
   }
